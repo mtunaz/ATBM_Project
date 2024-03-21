@@ -31,7 +31,7 @@ namespace ATBM_Project
                 if (conn.State == ConnectionState.Open)
                 {
                     MainForm mainForm = new MainForm();
-                    this.Hide();s
+                    this.Hide();
                     mainForm.Show();
                 }
             }
