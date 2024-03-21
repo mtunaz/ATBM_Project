@@ -19,6 +19,7 @@ namespace ATBM_Project
         {
             InitializeComponent();
             this.FormClosed += CloseForm;
+            textBox2.PasswordChar = '*';
         }
         private void button1_Click(object sender, EventArgs e)
         {
