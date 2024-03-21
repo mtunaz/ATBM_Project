@@ -26,7 +26,7 @@ namespace ATBM_Project
         private void CloseForm(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
-            MainForm.conn.Close();
+            DangNhap.conn.Close();
         }
 
   
@@ -41,7 +41,7 @@ namespace ATBM_Project
         private void button_PSys_Click(object sender, EventArgs e)
         {
             string query = $"SELECT * FROM ROLE_SYS_PRIVS WHERE ROLE = '{mainForm.selected_user}'";
-            OracleCommand cmd = new OracleCommand(query, MainForm.conn);
+            OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
             OracleDataAdapter da = new OracleDataAdapter(cmd);
             DataTable dt = new DataTable();
             da.Fill(dt);
@@ -51,7 +51,7 @@ namespace ATBM_Project
         private void button_PTable_Click_1(object sender, EventArgs e)
         {
             string query = $"SELECT * FROM ROLE_TAB_PRIVS WHERE ROLE = '{mainForm.selected_user}'";
-            OracleCommand cmd = new OracleCommand(query, MainForm.conn);
+            OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
             OracleDataAdapter da = new OracleDataAdapter(cmd);
             DataTable dt = new DataTable();
             da.Fill(dt);
@@ -61,7 +61,7 @@ namespace ATBM_Project
         private void button_PCol_Click_1(object sender, EventArgs e)
         {
             string query = $"SELECT * FROM USER_COL_PRIVS WHERE GRANTEE = '{mainForm.selected_user}'";
-            OracleCommand cmd = new OracleCommand(query, MainForm.conn);
+            OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
             OracleDataAdapter da = new OracleDataAdapter(cmd);
             DataTable dt = new DataTable();
             da.Fill(dt);

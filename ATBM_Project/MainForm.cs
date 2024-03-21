@@ -8,15 +8,15 @@ namespace ATBM_Project
 {
     public partial class MainForm : Form
     {
-        string connectionString = $@"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=xe)));Password=291003aA;User ID=sys;DBA Privilege=SYSDBA";
+       
         public string selected_user = "";
-        public static OracleConnection conn;
+        
         public string user_or_role = "";
         public MainForm()
         {
             InitializeComponent();
-            conn = new OracleConnection(connectionString);
-            conn.Open();
+            /*conn = new OracleConnection(connectionString);
+            conn.Open();*/
             dataGridView1.CellClick += dataGridView1_CellContentClick;
             this.FormClosed += CloseForm;
             dataGridView1.DataBindingComplete += clear_first_select;
@@ -57,7 +57,7 @@ namespace ATBM_Project
         private void CloseForm(object sender, FormClosedEventArgs e)
         {
             Application.Exit();
-            MainForm.conn.Close();
+            DangNhap.conn.Close();
         }
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -94,7 +94,7 @@ namespace ATBM_Project
                 cmdstr = "SELECT ROLE FROM DBA_ROLES";
             else if (user_or_role == "user")
                 cmdstr = "SELECT username FROM all_users";
-            OracleCommand cmd = new OracleCommand(cmdstr, conn);
+            OracleCommand cmd = new OracleCommand(cmdstr, DangNhap.conn);
             OracleDataAdapter oda = new OracleDataAdapter(cmd);
             DataTable dt = new DataTable();
             oda.Fill(dt);
@@ -106,9 +106,9 @@ namespace ATBM_Project
         {
             if (user_or_role == "user")
             {
-                OracleCommand cmd = new OracleCommand($"DROP USER {selected_user} CASCADE", conn);
+                OracleCommand cmd = new OracleCommand($"DROP USER {selected_user} CASCADE", DangNhap.conn);
                 cmd.ExecuteNonQuery();
-                cmd = new OracleCommand("SELECT username FROM all_users", conn);
+                cmd = new OracleCommand("SELECT username FROM all_users", DangNhap.conn);
                 OracleDataAdapter oda = new OracleDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 oda.Fill(dt);
@@ -118,9 +118,9 @@ namespace ATBM_Project
 
             if (user_or_role == "role")
             {
-                OracleCommand cmd = new OracleCommand($"DROP ROLE {selected_user}", conn);
+                OracleCommand cmd = new OracleCommand($"DROP ROLE {selected_user}", DangNhap.conn);
                 cmd.ExecuteNonQuery();
-                cmd = new OracleCommand("SELECT ROLE FROM DBA_ROLES", conn);
+                cmd = new OracleCommand("SELECT ROLE FROM DBA_ROLES", DangNhap.conn);
                 OracleDataAdapter oda = new OracleDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 oda.Fill(dt);
@@ -144,13 +144,13 @@ namespace ATBM_Project
         {
             if (user_or_role == "user" && !String.IsNullOrEmpty(textBox1.Text) && !String.IsNullOrEmpty(textBox2.Text))
             {
-                OracleCommand cmd = new OracleCommand($"CREATE USER {textBox1.Text} IDENTIFIED BY {textBox2.Text}", conn);
+                OracleCommand cmd = new OracleCommand($"CREATE USER {textBox1.Text} IDENTIFIED BY {textBox2.Text}", DangNhap.conn);
                 int rowsAffected = cmd.ExecuteNonQuery();
                 LoadData();
             }
             if (user_or_role == "role" && !String.IsNullOrEmpty(textBox1.Text))
             {
-                OracleCommand cmd = new OracleCommand($"CREATE ROLE {textBox1.Text}", conn);
+                OracleCommand cmd = new OracleCommand($"CREATE ROLE {textBox1.Text}", DangNhap.conn);
                 int rowsAffected = cmd.ExecuteNonQuery();
                 LoadData();
             }
@@ -161,7 +161,7 @@ namespace ATBM_Project
             string username, password;
             username = textBox1.Text;
             password = textBox2.Text;
-            using (OracleCommand cmd = new OracleCommand("p_alter_user", conn))
+            using (OracleCommand cmd = new OracleCommand("p_alter_user", DangNhap.conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.Add("par_username", OracleDbType.Varchar2).Value = username;
