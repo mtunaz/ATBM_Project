@@ -175,5 +175,13 @@ namespace ATBM_Project
         {
 
         }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            PhanQuyen phan_quyen = new PhanQuyen(this);
+            this.Hide();
+            phan_quyen.Location = this.Location;
+            phan_quyen.Show();
+        }
     }
 }

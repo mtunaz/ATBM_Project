@@ -35,7 +35,6 @@ namespace ATBM_Project
             this.Hide();
             mainForm.selected_user = "";
             mainForm.Show();
-
         }
 
         private void button_PSys_Click(object sender, EventArgs e)
