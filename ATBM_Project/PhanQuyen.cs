@@ -38,14 +38,14 @@ namespace ATBM_Project
         {
             if (comboBox1.Text == "Cấp quyền cho user")
             {
-                CapQuyenUser cap_quyen_user = new CapQuyenUser();
+                CapQuyenUser cap_quyen_user = new CapQuyenUser(mainForm);
                 this.Hide();
                 cap_quyen_user.Location = this.Location;
                 cap_quyen_user.Show();
             }    else
             if (comboBox1.Text == "Cấp quyền cho role")
             {
-                CapQuyenRole cap_quyen_role = new CapQuyenRole();
+                CapQuyenRole cap_quyen_role = new CapQuyenRole(mainForm);
                 this.Hide();
                 cap_quyen_role.Location = this.Location;
                 cap_quyen_role.Show();
