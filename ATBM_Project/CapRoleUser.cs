@@ -14,9 +14,10 @@ namespace ATBM_Project
     public partial class CapRoleUser : Form
     {
         MainForm mainForm = null;
-        public CapRoleUser()
+        public CapRoleUser(MainForm mainForm)
         {
             InitializeComponent();
+            this.mainForm = mainForm;
         }
 
         private void label2_Click(object sender, EventArgs e)
@@ -43,7 +44,7 @@ namespace ATBM_Project
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string query = $"GRANT {textBox1.Text}  TO {textBox2.Text}";
+            string query = $"GRANT C##{textBox1.Text}  TO C##{textBox2.Text}";
             OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
             cmd.ExecuteNonQuery();
             MessageBox.Show($"Cấp role {textBox1.Text} cho user {textBox2.Text} thành công");

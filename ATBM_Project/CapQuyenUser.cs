@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,7 @@ namespace ATBM_Project
         MainForm mainForm = null;
         bool with_grant_option = false;
         string withgo = " WITH GRANT OPTION";
+        bool column = false;
         public CapQuyenUser(MainForm MainForm)
         {
 
@@ -49,8 +51,24 @@ namespace ATBM_Project
         private void button1_Click(object sender, EventArgs e)
         {
             string selectedValue = comboBox1.SelectedItem.ToString();
-            string query = $"GRANT SELECT ON {selectedValue} TO {textBox1.Text}";
-            if (with_grant_option == true) query += withgo;
+
+            string createViewCommandText = $"CREATE OR REPLACE VIEW v_{selectedValue}_{comboBox2.SelectedItem.ToString()} AS SELECT {comboBox2.SelectedItem.ToString()} FROM {selectedValue}";
+
+            string query = $"GRANT SELECT ON {selectedValue} TO C##{textBox1.Text}";
+            if (column == true)
+            {
+                OracleCommand createViewCommand = new OracleCommand(createViewCommandText, DangNhap.conn);
+                createViewCommand.ExecuteNonQuery();
+                query = $"GRANT SELECT ON v_{selectedValue}_{comboBox2.SelectedItem.ToString()} TO C##{textBox1.Text}";
+                OracleCommand command = new OracleCommand(query, DangNhap.conn);
+                command.ExecuteNonQuery();
+            }
+            else
+            {
+                OracleCommand command = new OracleCommand(query, DangNhap.conn);
+                command.ExecuteNonQuery();
+            }
+
             OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
             cmd.ExecuteNonQuery();
             MessageBox.Show("Cấp quyền SELECT thành công");
@@ -59,7 +77,7 @@ namespace ATBM_Project
         private void button3_Click(object sender, EventArgs e)
         {
             string selectedValue = comboBox1.SelectedItem.ToString();
-            string query = $"GRANT DELETE ON {selectedValue} TO {textBox1.Text}";
+            string query = $"GRANT DELETE ON {selectedValue} TO C##{textBox1.Text}";
             if (with_grant_option == true) query += withgo;
             OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
             cmd.ExecuteNonQuery();
@@ -69,7 +87,7 @@ namespace ATBM_Project
         private void button4_Click(object sender, EventArgs e)
         {
             string selectedValue = comboBox1.SelectedItem.ToString();
-            string query = $"GRANT INSERT ON {selectedValue} TO {textBox1.Text}";
+            string query = $"GRANT INSERT ON {selectedValue} TO C##{textBox1.Text}";
             if (with_grant_option == true) query += withgo;
             OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
             cmd.ExecuteNonQuery();
@@ -79,17 +97,38 @@ namespace ATBM_Project
         private void button_CapQuyenUpdate_Click(object sender, EventArgs e)
         {
             string selectedValue = comboBox1.SelectedItem.ToString();
-            string query = $"GRANT UPDATE ON {selectedValue} TO {textBox1.Text}";
-            if (with_grant_option == true) query += withgo;
-            OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
-            cmd.ExecuteNonQuery();
+            string query = $"GRANT UPDATE ON {selectedValue} TO C##{textBox1.Text}";
+
+            if (column == true)
+            {
+                query = $"GRANT UPDATE ({comboBox2.SelectedItem.ToString()}) ON {selectedValue} TO C##{textBox1.Text}";
+                OracleCommand command = new OracleCommand(query, DangNhap.conn);
+                command.ExecuteNonQuery();
+            }
+            else
+            {
+                OracleCommand command = new OracleCommand(query, DangNhap.conn);
+                command.ExecuteNonQuery();
+            }
+
             MessageBox.Show("Cấp quyền UPDATE thành công");
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
             string selectedValue = comboBox1.SelectedItem.ToString();
-            string query = $"REVOKE SELECT ON {selectedValue} FROM {textBox1.Text}";
+            string query = $"REVOKE SELECT ON {selectedValue} FROM C##{textBox1.Text}";
+            if (column == true)
+            {
+                query = $"REVOKE SELECT ON v_{selectedValue}_{comboBox2.SelectedItem.ToString()} FROM C##{textBox1.Text}";
+                OracleCommand command = new OracleCommand(query, DangNhap.conn);
+                command.ExecuteNonQuery();
+            }
+            else
+            {
+                OracleCommand command = new OracleCommand(query, DangNhap.conn);
+                command.ExecuteNonQuery();
+            }
             OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
             cmd.ExecuteNonQuery();
             MessageBox.Show("Xóa quyền SELECT thành công");
@@ -98,7 +137,7 @@ namespace ATBM_Project
         private void button6_Click(object sender, EventArgs e)
         {
             string selectedValue = comboBox1.SelectedItem.ToString();
-            string query = $"REVOKE DELETE ON {selectedValue} FROM {textBox1.Text}";
+            string query = $"REVOKE DELETE ON {selectedValue} FROM C##{textBox1.Text}";
             OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
             cmd.ExecuteNonQuery();
             MessageBox.Show("Xóa quyền DELETE thành công");
@@ -107,7 +146,7 @@ namespace ATBM_Project
         private void button7_Click(object sender, EventArgs e)
         {
             string selectedValue = comboBox1.SelectedItem.ToString();
-            string query = $"REVOKE INSERT ON {selectedValue} FROM {textBox1.Text}";
+            string query = $"REVOKE INSERT ON {selectedValue} FROM C##{textBox1.Text}";
             OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
             cmd.ExecuteNonQuery();
             MessageBox.Show("Xóa quyền INSERT thành công");
@@ -116,7 +155,7 @@ namespace ATBM_Project
         private void button8_Click(object sender, EventArgs e)
         {
             string selectedValue = comboBox1.SelectedItem.ToString();
-            string query = $"REVOKE UPDATE ON {selectedValue} FROM {textBox1.Text}";
+            string query = $"REVOKE UPDATE ON {selectedValue} FROM C##{textBox1.Text}";
             OracleCommand cmd = new OracleCommand(query, DangNhap.conn);
             cmd.ExecuteNonQuery();
             MessageBox.Show("Xóa quyền UPDATE thành công");
@@ -144,6 +183,11 @@ namespace ATBM_Project
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
             with_grant_option = !with_grant_option;
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            column = !column;
         }
     }
 }

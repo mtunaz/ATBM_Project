@@ -52,7 +52,7 @@ namespace ATBM_Project
             } else
             if (comboBox1.Text == "Cấp role cho user")
             {
-                CapRoleUser cap_role_user = new CapRoleUser();
+                CapRoleUser cap_role_user = new CapRoleUser(mainForm);
                 this.Hide();
                 cap_role_user.Location = this.Location;
                 cap_role_user.Show();

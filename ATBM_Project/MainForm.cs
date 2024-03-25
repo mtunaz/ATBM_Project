@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Oracle.DataAccess.Client;
 
+
 namespace ATBM_Project
 {
     public partial class MainForm : Form
@@ -20,6 +21,7 @@ namespace ATBM_Project
             dataGridView1.CellClick += dataGridView1_CellContentClick;
             this.FormClosed += CloseForm;
             dataGridView1.DataBindingComplete += clear_first_select;
+            textBox2.PasswordChar = '*';
 
         }
 
@@ -144,13 +146,13 @@ namespace ATBM_Project
         {
             if (user_or_role == "user" && !String.IsNullOrEmpty(textBox1.Text) && !String.IsNullOrEmpty(textBox2.Text))
             {
-                OracleCommand cmd = new OracleCommand($"CREATE USER {textBox1.Text} IDENTIFIED BY {textBox2.Text}", DangNhap.conn);
+                OracleCommand cmd = new OracleCommand($"CREATE USER C##{textBox1.Text} IDENTIFIED BY {textBox2.Text}", DangNhap.conn);
                 int rowsAffected = cmd.ExecuteNonQuery();
                 LoadData();
             }
             if (user_or_role == "role" && !String.IsNullOrEmpty(textBox1.Text))
             {
-                OracleCommand cmd = new OracleCommand($"CREATE ROLE {textBox1.Text}", DangNhap.conn);
+                OracleCommand cmd = new OracleCommand($"CREATE ROLE C##{textBox1.Text}", DangNhap.conn);
                 int rowsAffected = cmd.ExecuteNonQuery();
                 LoadData();
             }
@@ -158,17 +160,18 @@ namespace ATBM_Project
 
         private void button5_Click(object sender, EventArgs e)
         {
-            string username, password;
-            username = textBox1.Text;
-            password = textBox2.Text;
-            using (OracleCommand cmd = new OracleCommand("p_alter_user", DangNhap.conn))
+            if (!string.IsNullOrEmpty(textBox1.Text) && !string.IsNullOrEmpty(textBox2.Text))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add("par_username", OracleDbType.Varchar2).Value = username;
-                cmd.Parameters.Add("par_password", OracleDbType.Varchar2).Value = password;
+                string command = $"alter user C##{textBox1.Text} identified by {textBox2.Text}";
+                OracleCommand cmd = new OracleCommand(command, DangNhap.conn);
                 cmd.ExecuteNonQuery();
-                MessageBox.Show("Hiệu chỉnh user thành công");
+                MessageBox.Show("Hieu chinh thanh cong");
             }
+            else
+            {
+                MessageBox.Show("Please enter both username and password.");
+            }
+
         }
 
         private void textBox3_TextChanged(object sender, EventArgs e)
@@ -182,6 +185,19 @@ namespace ATBM_Project
             this.Hide();
             phan_quyen.Location = this.Location;
             phan_quyen.Show();
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (user_or_role == "user" && selected_user != "")
+            {
+                OracleCommand cmd = new OracleCommand($"select * from DBA_ROLE_PRIVS where GRANTEE ='{selected_user}'", DangNhap.conn);
+                OracleDataAdapter oda = new OracleDataAdapter(cmd);
+                DataTable dt = new DataTable();
+                oda.Fill(dt);
+                dataGridView1.DataSource = dt;
+                dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            }
         }
     }
 }

@@ -31,10 +31,14 @@ namespace ATBM_Project
                 conn.Open();
                 if (conn.State == ConnectionState.Open)
                 {
+                    
                     MainForm mainForm = new MainForm();
                     this.Hide();
                     mainForm.Show();
+                   
+
                 }
+                
             }
             catch (OracleException ex)
             {
